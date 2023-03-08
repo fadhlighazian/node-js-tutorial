@@ -11,7 +11,8 @@ app.use('/add-product', (req, res, next) => {
   // next(); // Allows the request to continue to the next middleware in line
 });
 
-// Middleware functions are executed sequentially, therefore the order of middleware inclusion is important.
+// Middleware functions are executed sequentially,
+// therefore the order of middleware inclusion is important.
 app.use('/', (req, res, next) => {
   console.log('In another middleware');
   res.send('<h1>Hello from Express.js</h1>');
@@ -21,4 +22,4 @@ app.use('/', (req, res, next) => {
 const server = http.createServer(app);
 
 // listen to the server
-server.listen(3000);
+server.listen(3001);
