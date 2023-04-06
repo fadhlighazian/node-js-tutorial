@@ -1,14 +1,15 @@
 const fs = require('fs');
 const path = require('path');
 
-// the path for storing data into "products.json" in "data" folders
+const Cart = require('./cart');
+
 const p = path.join(
   path.dirname(process.mainModule.filename),
   'data',
   'products.json'
 );
 
-// helper function to read File
+// helper function
 const getProductsFromFile = (cb) => {
   fs.readFile(p, (err, fileContent) => {
     if (err) {
@@ -19,17 +20,15 @@ const getProductsFromFile = (cb) => {
   });
 };
 
-// CLASS Product
 module.exports = class Product {
-  constructor(id, title, imageUrl, price, description) {
+  constructor(id, title, imageUrl, description, price) {
     this.id = id;
     this.title = title;
     this.imageUrl = imageUrl;
-    this.price = price;
     this.description = description;
+    this.price = price;
   }
 
-  // storing data in files via models
   save() {
     getProductsFromFile((products) => {
       if (this.id) {
@@ -51,12 +50,25 @@ module.exports = class Product {
     });
   }
 
-  // fetching data in files via models
+  // for Delete Product
+  static deleteById(id) {
+    getProductsFromFile((products) => {
+      const product = products.find((prod) => prod.id === id);
+      const updatedProducts = products.filter((prod) => prod.id !== id);
+      fs.writeFile(p, JSON.stringify(updatedProducts), (err) => {
+        if (!err) {
+          Cart.deleteProduct(id, product.price);
+        }
+      });
+    });
+  }
+
+  // for Get All Product
   static fetchAll(cb) {
     getProductsFromFile(cb);
   }
 
-  // fetching data for Product Detail
+  // for Detail Product
   static findById(id, cb) {
     getProductsFromFile((products) => {
       const product = products.find((p) => p.id === id);
